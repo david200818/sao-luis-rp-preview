@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>GM-001 Login</title>
+<style>
+body{margin:0;background:#111;color:#fff;font-family:Arial,sans-serif}
+.wrap{max-width:900px;margin:20px auto;padding:12px}
+.tip{background:#1a3a1a;border:1px solid #2d6b2d;padding:12px;border-radius:6px;margin-bottom:12px}
+.screen{position:relative;max-width:800px;margin:0 auto;aspect-ratio:4/3;background:linear-gradient(160deg,#1a2a4a,#0d1525,#2a1a0a);border:3px solid #444}
+.panel{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:280px;padding:20px;background:rgba(0,0,0,.85);text-align:center}
+h1{color:#ff8c00;font-size:36px;margin:0 0 8px;text-shadow:2px 2px #000}
+.sub{font-size:13px;color:#ddd;margin-bottom:16px}
+button{display:block;width:100%;margin:8px 0;padding:12px;font-size:18px;font-weight:bold;border:none;cursor:pointer;background:transparent;text-shadow:1px 1px #000}
+.entrar{color:#00cc00}
+.registrar{color:#3399ff}
+.msg{position:absolute;top:10px;left:12px;font-size:13px}
+.msg b{color:#ff8c00}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+.modal.on{display:flex}
+.box{width:360px;background:#3a3a3a;border:2px solid #888;color:#fff}
+.box h2{margin:0;padding:10px;background:#1e3a5f;font-size:15px}
+.box .body{padding:14px}
+.box input{width:100%;padding:8px;margin-top:8px;box-sizing:border-box}
+.box .foot{padding:10px;text-align:right}
+.box .foot button{width:auto;display:inline-block;margin-left:6px;padding:6px 16px;background:#ccc;color:#000;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="tip"><b>GM-001</b> Preview da tela de login SA-MP</div>
+<div class="screen">
+<div class="msg"><b>[Login]</b> Selecione ENTRAR ou REGISTRAR</div>
+<div class="panel">
+<h1>GM-001</h1>
+<p class="sub">Roleplay - Faca login ou registre-se</p>
+<button class="entrar" type="button" id="btnLogin">ENTRAR</button>
+<button class="registrar" type="button" id="btnRegister">REGISTRAR</button>
+</div>
+</div>
+</div>
+<div class="modal" id="modal">
+<div class="box">
+<h2 id="titulo">Entrar - GM-001</h2>
+<div class="body">
+<p id="texto">Digite sua senha:</p>
+<input type="password" id="senha" autocomplete="off">
+</div>
+<div class="foot">
+<button type="button" id="btnOk">OK</button>
+<button type="button" id="btnVoltar">Voltar</button>
+</div>
+</div>
+</div>
+<script>
+var modo="", passo=0, senha1="";
+var modal=document.getElementById("modal");
+var titulo=document.getElementById("titulo");
+var texto=document.getElementById("texto");
+var senha=document.getElementById("senha");
+document.getElementById("btnLogin").onclick=function(){modo="login";passo=0;senha1="";senha.value="";modal.className="modal on";titulo.textContent="Entrar - GM-001";texto.textContent="Digite sua senha:";document.getElementById("btnOk").textContent="Entrar";};
+document.getElementById("btnRegister").onclick=function(){modo="reg";passo=0;senha1="";senha.value="";modal.className="modal on";titulo.textContent="Registrar - GM-001";texto.textContent="Crie uma senha com 4 ou mais caracteres:";document.getElementById("btnOk").textContent="Continuar";};
+document.getElementById("btnVoltar").onclick=function(){modal.className="modal";};
+document.getElementById("btnOk").onclick=function(){
+var s=senha.value;
+if(s.length<4){alert("[Login] Senha invalida.");return;}
+if(modo==="login"){alert("[Login] Bem-vindo! Simulacao.");modal.className="modal";return;}
+if(passo===0){senha1=s;passo=1;senha.value="";texto.textContent="Confirme sua senha:";document.getElementById("btnOk").textContent="Registrar";return;}
+if(s!==senha1){alert("[Login] Senhas nao coincidem.");passo=0;texto.textContent="Crie uma senha com 4 ou mais caracteres:";document.getElementById("btnOk").textContent="Continuar";senha.value="";return;}
+alert("[Login] Conta criada! Simulacao.");modal.className="modal";
+};
+</script>
+</body>
+</html>
