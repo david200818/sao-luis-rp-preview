@@ -3,164 +3,288 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Loja de Roupas - Sao Luis RP</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>STREET - Loja de Roupas | Sao Luis RP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; font-family: Inter, "Segoe UI", Arial, sans-serif; color: #fff; background: #111; }
+    html, body { height: 100%; overflow: hidden; font-family: Inter, "Segoe UI", sans-serif; color: #fff; }
+
     .scene {
       position: fixed; inset: 0;
-      background: linear-gradient(90deg, rgba(0,0,0,.7), rgba(0,0,0,.35)), #1a1008 center/cover no-repeat;
-      background-size: cover; background-position: center;
+      background: #2a2420 url("img/loja-bg.png") center/cover no-repeat;
     }
-    .top { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 8px; background: rgba(26,58,26,.92); font-size: 12px; text-align: center; }
-    .binco { position: absolute; left: 28px; top: 56px; background: #f5a623; padding: 8px 20px; font-weight: 800; font-size: 18px; z-index: 5; }
-    .panel { position: absolute; left: 26px; top: 96px; width: 220px; background: rgba(0,0,0,.88); padding: 10px 0; z-index: 5; border: 1px solid rgba(245,166,35,.35); }
-    .panel h2 { font-size: 11px; padding: 0 12px 8px; letter-spacing: .08em; display: flex; justify-content: space-between; }
-    .cat { padding: 4px 12px 8px; font-size: 10px; color: #f5a623; }
-    .list li { padding: 8px 12px; font-size: 13px; color: #aaa; cursor: pointer; list-style: none; }
-    .list li.active { background: #fff; color: #000; font-weight: 700; }
-    .list li:hover:not(.active) { background: rgba(255,255,255,.08); color: #fff; }
-    .tab { margin: 10px 12px 0; width: calc(100% - 24px); padding: 8px; border: 1px solid #f5a623; background: 0; color: #f5a623; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 11px; }
+    .scene::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,.82) 0%, rgba(0,0,0,.45) 45%, rgba(0,0,0,.7) 100%);
+      pointer-events: none;
+    }
+
+    .graffiti {
+      position: fixed; right: 8%; top: 18%;
+      font-family: "Bebas Neue", Impact, sans-serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      color: #fff;
+      -webkit-text-stroke: 3px #000;
+      text-shadow: 4px 4px 0 #e63946, 8px 8px 0 #000;
+      transform: rotate(-4deg);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 1;
+      letter-spacing: 0.08em;
+    }
+
+    .top {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      padding: 10px 16px;
+      background: linear-gradient(180deg, rgba(0,0,0,.9), transparent);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px;
+    }
+    .top .brand {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.5rem;
+      color: #e63946;
+      letter-spacing: 0.12em;
+    }
+    .top a { color: #aaa; text-decoration: none; }
+    .top a:hover { color: #fff; }
+
+    .panel {
+      position: absolute; left: 20px; top: 72px; bottom: 48px;
+      width: 260px; z-index: 10;
+      background: rgba(18, 18, 18, 0.92);
+      border: 2px solid #e63946;
+      border-radius: 4px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.6);
+      display: flex; flex-direction: column;
+    }
+    .panel-head {
+      background: #e63946;
+      color: #fff;
+      padding: 12px 14px;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.1em;
+    }
+    .panel-head span { float: right; font-family: Inter; font-size: 11px; font-weight: 600; margin-top: 4px; }
+    .cat { padding: 10px 14px 6px; font-size: 10px; color: #e63946; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    .list { flex: 1; overflow-y: auto; list-style: none; }
+    .list li {
+      padding: 10px 14px; font-size: 12px; color: #bbb;
+      cursor: pointer; border-left: 3px solid transparent;
+      line-height: 1.35;
+    }
+    .list li small { display: block; color: #666; font-size: 10px; margin-top: 2px; }
+    .list li.active {
+      background: rgba(230, 57, 70, 0.25);
+      color: #fff; border-left-color: #e63946; font-weight: 600;
+    }
+    .list li:hover:not(.active) { background: rgba(255,255,255,.06); color: #fff; }
+    .tab {
+      margin: 10px; padding: 10px;
+      border: 2px solid #e63946; background: transparent;
+      color: #e63946; cursor: pointer;
+      font-family: "Bebas Neue", sans-serif; font-size: 1rem; letter-spacing: 0.08em;
+    }
+    .tab:hover { background: #e63946; color: #fff; }
+
     .preview-box {
-      position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
-      width: 320px; padding: 20px; background: rgba(0,0,0,.88); border: 2px solid #f5a623;
-      border-radius: 10px; text-align: center; z-index: 5;
+      position: absolute; right: 20px; top: 72px; bottom: 48px;
+      width: min(380px, 42vw); z-index: 10;
+      background: rgba(12, 12, 12, 0.94);
+      border: 2px solid #333;
+      border-top: 4px solid #e63946;
+      border-radius: 4px;
+      display: flex; flex-direction: column;
+      padding: 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.7);
     }
-    .preview-box .lbl { font-size: 11px; color: #f5a623; letter-spacing: .1em; margin-bottom: 6px; }
-    .preview-box .name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-    .preview-box .id { font-size: 13px; color: #aaa; margin-bottom: 12px; }
+    .preview-box .lbl {
+      font-size: 10px; color: #e63946; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .preview-box .name {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 1.75rem; letter-spacing: 0.04em;
+      margin: 4px 0 2px; line-height: 1.1;
+    }
+    .preview-box .meta { font-size: 11px; color: #888; margin-bottom: 10px; }
+    .preview-box .meta code { color: #ccc; background: #222; padding: 2px 6px; border-radius: 3px; }
+
     .outfit-photo-wrap {
-      width: 100%; height: 300px; margin: 0 auto 12px;
-      background: rgba(20,20,20,.9); border-radius: 8px; overflow: hidden;
-      border: 1px solid rgba(255,255,255,.2);
-      display: flex; align-items: center; justify-content: center;
+      flex: 1; min-height: 200px;
+      background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+      border: 1px solid #333;
+      border-radius: 4px;
+      display: flex; align-items: flex-end; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+    .outfit-photo-wrap::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center bottom, rgba(230,57,70,.15), transparent 70%);
     }
     .outfit-photo-wrap img {
-      width: 100%; height: 100%; object-fit: contain; object-position: center bottom;
-      opacity: 0; transition: opacity .3s;
+      max-height: 100%; max-width: 100%;
+      object-fit: contain; object-position: center bottom;
+      opacity: 0; transition: opacity .35s;
+      position: relative; z-index: 1;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,.8));
     }
     .outfit-photo-wrap img.show { opacity: 1; }
-    .outfit-photo-wrap .loading { color: #888; font-size: 12px; position: absolute; }
-    .photo-hint { font-size: 10px; color: #888; margin-bottom: 12px; line-height: 1.4; }
-    .confirm { width: 100%; padding: 12px; background: #4cd964; border: 0; color: #000; font-weight: 700; cursor: pointer; font-family: inherit; border-radius: 6px; }
-    .hints { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #888; z-index: 5; }
+    .loading {
+      position: absolute; z-index: 2;
+      font-size: 11px; color: #666;
+    }
+    .photo-hint {
+      font-size: 10px; color: #555; margin: 10px 0;
+      line-height: 1.4;
+    }
+    .photo-hint a { color: #e63946; }
+    .confirm {
+      width: 100%; padding: 14px;
+      background: #e63946; border: 0;
+      color: #fff; font-family: "Bebas Neue", sans-serif;
+      font-size: 1.2rem; letter-spacing: 0.12em;
+      cursor: pointer; border-radius: 4px;
+    }
+    .confirm:hover { background: #ff4d5a; }
+
+    .hints {
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      z-index: 20; font-size: 11px; color: rgba(255,255,255,.45);
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <div class="top" id="topBar">Loja de roupas</div>
   <div class="scene" id="scene"></div>
-  <div class="binco">binco</div>
-  <div class="panel">
-    <h2>ROUPAS: ESCOLHA <span id="counter">1/12</span></h2>
-    <div class="cat" id="catName">Categoria: CASUAL M</div>
+  <div class="graffiti">STREET</div>
+
+  <header class="top">
+    <span class="brand">SAO LUIS RP</span>
+    <span id="topBar">Loja de roupas</span>
+    <a href="https://open.mp/pt-BR/docs/scripting/resources/skins" target="_blank" rel="noopener">Skins open.mp</a>
+  </header>
+
+  <aside class="panel">
+    <div class="panel-head">ROUPAS <span id="counter">1/8</span></div>
+    <div class="cat" id="catName">STREET / RUA</div>
     <ul class="list" id="list"></ul>
-    <button type="button" class="tab" id="tabBtn">TAB Categoria</button>
-  </div>
-  <div class="preview-box">
-    <div class="lbl">PREVIEW DA ROUPA</div>
-    <div class="name" id="selName">CJ Padrao</div>
-    <div class="id" id="selId">ID da skin: 26</div>
+    <button type="button" class="tab" id="tabBtn">TAB — PROXIMA CATEGORIA</button>
+  </aside>
+
+  <section class="preview-box">
+    <div class="lbl">Preview da skin</div>
+    <div class="name" id="selName">—</div>
+    <p class="meta">ID <code id="selId">0</code> · modelo <code id="selModel">—</code></p>
     <div class="outfit-photo-wrap" id="photoWrap">
-      <span class="loading" id="photoLoad">Carregando foto...</span>
-      <img id="outfitImg" alt="Preview da roupa" referrerpolicy="no-referrer" crossorigin="anonymous">
+      <span class="loading" id="photoLoad">Carregando...</span>
+      <img id="outfitImg" alt="Skin GTA SA" referrerpolicy="no-referrer">
     </div>
-    <p class="photo-hint" id="photoHint"></p>
-    <button type="button" class="confirm" id="confirm">X Confirmar</button>
-  </div>
-  <p class="hints">Setas: trocar | TAB: categoria | Sua foto: img/roupas/nome.jpg</p>
+    <p class="photo-hint">
+      Imagem oficial: <a id="imgLink" href="#" target="_blank" rel="noopener">assets.open.mp</a>
+      · <a href="https://open.mp/pt-BR/docs/scripting/resources/skins" target="_blank" rel="noopener">lista completa</a>
+    </p>
+    <button type="button" class="confirm" id="confirm">X CONFIRMAR ROUPA</button>
+  </section>
+
+  <p class="hints">Setas ↑↓ trocar roupa · TAB categoria · Fonte: open.mp</p>
 
   <script>
   (function () {
+    var OPENMP_SKIN_IMG = "https://assets.open.mp/assets/images/skins/";
+
+    /* Categorias com IDs e nomes da documentacao open.mp */
     var SLRP_CATS = [
-      { n: "CASUAL M", s: [26,29,60,72,73,88,97,98,142,170,186,220],
-        l: ["CJ Padrao","Motorista","Fazendeiro","Skin_072","Skin_073","Negociante","Mendigo","Skin_098","Skin_142","Skin_170","Skin_186","Skin_220"] },
-      { n: "RUA / RP", s: [28,30,31,33,34,35,36,37,43,44,45,46],
-        l: ["Skin_028","Skin_030","Skin_031","Skin_033","Skin_034","Skin_035","Skin_036","Skin_037","Skin_043","Skin_044","Skin_045","Skin_046"] },
-      { n: "FEMININO", s: [55,56,57,58,59,60,61,62,63,64,69],
-        l: ["Mulher_01","Mulher_02","Mulher_03","Mulher_04","Mulher_05","Mulher_Casual","Mulher_07","Mulher_08","Mulher_09","Mulher_10","Mulher_11"] },
-      { n: "TRABALHO", s: [16,61,62,68,70,71,147,148,149],
-        l: ["Lixeiro","Policia","FBI","Mecanico","Fazendeiro_Trabalho","Skin_071","Skin_147","Skin_148","Skin_149"] }
+      {
+        n: "STREET / RUA",
+        items: [
+          { id: 28, model: "bmydrug", name: "Traficante (Los Santos)" },
+          { id: 29, model: "wmydrug", name: "Traficante (San Fierro)" },
+          { id: 105, model: "fam1", name: "Grove Street Families" },
+          { id: 106, model: "fam2", name: "Grove Street Families 2" },
+          { id: 107, model: "fam3", name: "Grove Street Families 3" },
+          { id: 108, model: "lsv1", name: "Los Santos Vagos" },
+          { id: 109, model: "lsv2", name: "Los Santos Vagos 2" },
+          { id: 110, model: "lsv3", name: "Los Santos Vagos 3" },
+          { id: 173, model: "sfr1", name: "San Fierro Rifa" },
+          { id: 174, model: "sfr2", name: "San Fierro Rifa 2" },
+          { id: 175, model: "sfr3", name: "San Fierro Rifa 3" },
+          { id: 181, model: "vwmycr", name: "Punk" }
+        ]
+      },
+      {
+        n: "CASUAL",
+        items: [
+          { id: 26, model: "wmybp", name: "Mochileiro" },
+          { id: 21, model: "bmycr", name: "Pedestre" },
+          { id: 22, model: "bmyst", name: "Pedestre 2" },
+          { id: 23, model: "wmybmx", name: "BMX" },
+          { id: 101, model: "wmyst", name: "Pedestre 3" },
+          { id: 154, model: "wmybe", name: "Praia" },
+          { id: 188, model: "swmyst", name: "Pedestre 4" },
+          { id: 217, model: "wmyclot", name: "Loja de roupas" }
+        ]
+      },
+      {
+        n: "FEMININO",
+        items: [
+          { id: 55, model: "ofyri", name: "Pedestre" },
+          { id: 56, model: "ofyst", name: "Pedestre 2" },
+          { id: 93, model: "wfyst", name: "Pedestre 3" },
+          { id: 138, model: "wfybe", name: "Praia" },
+          { id: 211, model: "wfyclot", name: "Loja de roupas" },
+          { id: 251, model: "wfylg", name: "Salva-vidas" }
+        ]
+      },
+      {
+        n: "TRABALHO",
+        items: [
+          { id: 16, model: "bmyap", name: "Aeroporto (ground)" },
+          { id: 50, model: "wmymech", name: "Mecanico" },
+          { id: 156, model: "bmobar", name: "Barbeiro" },
+          { id: 177, model: "wmybar", name: "Barbeiro 2" },
+          { id: 280, model: "lapd1", name: "Policial Los Santos" },
+          { id: 281, model: "sfpd1", name: "Policial San Fierro" },
+          { id: 286, model: "fbi", name: "FBI" },
+          { id: 287, model: "army", name: "Exercito" }
+        ]
+      }
     ];
 
-    function slug(label) {
-      return String(label || "").toLowerCase()
-        .replace(/[àáâãäå]/g,"a").replace(/[èéêë]/g,"e").replace(/[ìíîï]/g,"i")
-        .replace(/[òóôõö]/g,"o").replace(/[ùúûü]/g,"u").replace(/ç/g,"c")
-        .replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
-    }
-
-    function outfitUrls(skinId, label) {
-      var s = slug(label), id = parseInt(skinId, 10) || 0, list = [];
-      if (s) {
-        list.push("img/roupas/" + s + ".jpg", "img/roupas/" + s + ".png", "img/roupas/" + s + ".webp");
-      }
-      list.push("img/roupas/skin_" + id + ".jpg", "img/roupas/skin_" + id + ".png");
-      list.push("https://assets.open.mp/assets/images/skins/" + id + ".png");
-      return list;
+    function skinImageUrl(id) {
+      return OPENMP_SKIN_IMG + id + ".png";
     }
 
     var loadToken = 0;
-    function loadOutfitImage(skinId, label) {
-      var urls = outfitUrls(skinId, label);
+    function loadOutfitImage(item) {
       var img = document.getElementById("outfitImg");
       var loadTxt = document.getElementById("photoLoad");
+      var url = skinImageUrl(item.id);
       var token = ++loadToken;
-      var i = 0;
+
+      document.getElementById("imgLink").href = url;
 
       img.classList.remove("show");
       loadTxt.style.display = "block";
-      loadTxt.textContent = "Carregando foto...";
+      loadTxt.textContent = "Carregando skin " + item.id + "...";
 
-      function tryNext() {
+      var probe = new Image();
+      probe.referrerPolicy = "no-referrer";
+      probe.onload = function () {
         if (token !== loadToken) return;
-        if (i >= urls.length) {
-          loadTxt.textContent = "Sem foto (adicione img/roupas/" + slug(label) + ".jpg)";
-          loadTxt.style.display = "block";
-          img.removeAttribute("src");
-          img.classList.remove("show");
-          return;
-        }
-        var url = urls[i++];
-        var probe = new Image();
-        probe.referrerPolicy = "no-referrer";
-        probe.onload = function () {
-          if (token !== loadToken) return;
-          img.src = url;
-          img.classList.add("show");
-          loadTxt.style.display = "none";
-        };
-        probe.onerror = tryNext;
-        probe.src = url;
-      }
-      tryNext();
-    }
-
-    function setSceneBanner(scene, src) {
-      scene.style.backgroundImage =
-        "linear-gradient(90deg,rgba(0,0,0,.65),rgba(0,0,0,.3)), url('" + String(src).replace(/'/g, "%27") + "')";
-      scene.style.backgroundSize = "cover";
-      scene.style.backgroundPosition = "center";
-    }
-
-    function applyBanner() {
-      var scene = document.getElementById("scene");
-      var exts = [".png", ".jpg", ".jpeg", ".webp"];
-      var ei = 0;
-      function tryDisk() {
-        if (ei >= exts.length) {
-          var saved = null;
-          try { saved = localStorage.getItem("slrp_banner_v1"); } catch (e) {}
-          if (saved) setSceneBanner(scene, saved);
-          return;
-        }
-        var url = "img/banner" + exts[ei++];
-        var t = new Image();
-        t.onload = function () { setSceneBanner(scene, url); };
-        t.onerror = tryDisk;
-        t.src = url;
-      }
-      tryDisk();
+        img.src = url;
+        img.classList.add("show");
+        loadTxt.style.display = "none";
+      };
+      probe.onerror = function () {
+        if (token !== loadToken) return;
+        loadTxt.textContent = "Erro ao carregar. Abra a lista open.mp.";
+        img.classList.remove("show");
+      };
+      probe.src = url;
     }
 
     var acc = null;
@@ -169,31 +293,35 @@
       window.location.replace("saoluis-login.html");
       return;
     }
-    document.getElementById("topBar").textContent = "Escolha sua roupa, " + acc;
-    applyBanner();
+    document.getElementById("topBar").textContent = "Conta: " + acc;
 
     var cat = 0, idx = 0;
 
+    function current() {
+      return SLRP_CATS[cat].items[idx];
+    }
+
     function render() {
       var c = SLRP_CATS[cat];
-      document.getElementById("catName").textContent = "Categoria: " + c.n;
-      document.getElementById("counter").textContent = (idx + 1) + "/" + c.s.length;
-      document.getElementById("selName").textContent = c.l[idx];
-      document.getElementById("selId").textContent = "ID da skin: " + c.s[idx];
-      document.getElementById("photoHint").textContent =
-        "Sua foto: img/roupas/" + slug(c.l[idx]) + ".jpg  |  Ou usa preview da skin " + c.s[idx];
+      var item = c.items[idx];
+      document.getElementById("catName").textContent = c.n;
+      document.getElementById("counter").textContent = (idx + 1) + "/" + c.items.length;
+      document.getElementById("selName").textContent = item.name;
+      document.getElementById("selId").textContent = item.id;
+      document.getElementById("selModel").textContent = item.model;
 
-      loadOutfitImage(c.s[idx], c.l[idx]);
+      loadOutfitImage(item);
 
       var list = document.getElementById("list");
       list.innerHTML = "";
-      var start = Math.max(0, idx - 2), end = Math.min(c.s.length, start + 5);
-      if (end - start < 5) start = Math.max(0, end - 5);
-      for (var j = start; j < end; j++) {
+      for (var j = 0; j < c.items.length; j++) {
         var li = document.createElement("li");
-        li.textContent = (j === idx ? "> " : "") + c.l[j];
+        var it = c.items[j];
+        li.innerHTML = (j === idx ? "▶ " : "") + it.name + "<small>ID " + it.id + " · " + it.model + "</small>";
         if (j === idx) li.className = "active";
-        li.onclick = (function (n) { return function () { idx = n; render(); }; })(j);
+        li.onclick = (function (n) {
+          return function () { idx = n; render(); };
+        })(j);
         list.appendChild(li);
       }
     }
@@ -205,22 +333,23 @@
     };
 
     document.getElementById("confirm").onclick = function () {
-      var roupa = SLRP_CATS[cat].l[idx];
-      var skin = SLRP_CATS[cat].s[idx];
+      var item = current();
       try { sessionStorage.removeItem("slrp_new_account"); } catch (e) {}
       document.body.innerHTML =
-        '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;background:#0d0520;color:#fff;text-align:center;padding:24px">' +
-        '<div style="max-width:400px;border:1px solid #ff8c00;border-radius:12px;padding:32px">' +
-        '<p style="color:#ff8c00;font-size:11px;letter-spacing:.2em">SPAWN</p>' +
+        '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+        'font-family:Inter,sans-serif;background:#1a1008;color:#fff;text-align:center;padding:24px">' +
+        '<div style="max-width:420px;border:2px solid #e63946;border-radius:8px;padding:36px">' +
+        '<p style="color:#e63946;font-family:Bebas Neue,sans-serif;font-size:1.2rem;letter-spacing:.15em">SPAWN</p>' +
         '<h1 style="margin:12px 0">Bem-vindo, ' + acc + '</h1>' +
-        '<p style="color:#aaa">Roupa: ' + roupa + ' (skin ' + skin + ')</p>' +
-        '<p style="color:#ccc;margin-top:8px">Voce apareceu no spawn do mapa.</p></div></div>';
+        '<p style="color:#aaa">Roupa: ' + item.name + '</p>' +
+        '<p style="color:#888;font-size:13px">Skin ID ' + item.id + ' (' + item.model + ')</p>' +
+        '<p style="color:#ccc;margin-top:12px">Voce apareceu no spawn do mapa.</p></div></div>';
     };
 
     document.onkeydown = function (e) {
       var c = SLRP_CATS[cat];
-      if (e.key === "ArrowUp") { idx = (idx - 1 + c.s.length) % c.s.length; render(); }
-      if (e.key === "ArrowDown") { idx = (idx + 1) % c.s.length; render(); }
+      if (e.key === "ArrowUp") { idx = (idx - 1 + c.items.length) % c.items.length; render(); }
+      if (e.key === "ArrowDown") { idx = (idx + 1) % c.items.length; render(); }
       if (e.key === "Tab") { e.preventDefault(); cat = (cat + 1) % SLRP_CATS.length; idx = 0; render(); }
     };
 
