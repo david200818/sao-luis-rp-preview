@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loja de Roupas - Sao Luis RP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: Inter, "Segoe UI", Arial, sans-serif; color: #fff; background: #111; }
+    .scene { position: fixed; inset: 0; background: linear-gradient(90deg,rgba(0,0,0,.6),rgba(0,0,0,.2)), url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600") center/cover; }
+    .top { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 8px; background: #1a3a1a; font-size: 12px; text-align: center; }
+    .top a { color: #7fff7f; margin-left: 12px; }
+    .binco { position: absolute; left: 28px; top: 100px; background: #f5a623; padding: 8px 20px; font-weight: 800; font-size: 18px; }
+    .panel { position: absolute; left: 26px; top: 140px; width: 210px; background: rgba(0,0,0,.85); padding: 10px 0; }
+    .panel h2 { font-size: 11px; padding: 0 12px 8px; letter-spacing: .08em; display: flex; justify-content: space-between; }
+    .cat { padding: 4px 12px 8px; font-size: 10px; color: #f5a623; }
+    .list li { padding: 8px 12px; font-size: 13px; color: #aaa; cursor: pointer; list-style: none; }
+    .list li.active { background: #fff; color: #000; font-weight: 700; }
+    .list li:hover:not(.active) { background: rgba(255,255,255,.08); color: #fff; }
+    .tab { margin: 10px 12px 0; width: calc(100% - 24px); padding: 8px; border: 1px solid #f5a623; background: 0; color: #f5a623; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 11px; }
+    .preview-box {
+      position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+      width: 280px; padding: 24px; background: rgba(0,0,0,.75); border: 2px solid #f5a623;
+      border-radius: 8px; text-align: center;
+    }
+    .preview-box .lbl { font-size: 11px; color: #f5a623; letter-spacing: .1em; margin-bottom: 8px; }
+    .preview-box .name { font-size: 26px; font-weight: 800; margin-bottom: 6px; line-height: 1.2; }
+    .preview-box .id { font-size: 14px; color: #aaa; margin-bottom: 16px; }
+    .preview-box .char {
+      width: 100px; height: 180px; margin: 0 auto 16px;
+      background: linear-gradient(180deg, #c44, #811); border-radius: 30px 30px 8px 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5); transition: background .2s;
+    }
+    .preview-box .char::before {
+      content: ""; display: block; width: 44px; height: 44px; margin: -22px auto 0;
+      background: inherit; border-radius: 50%;
+    }
+    .confirm { width: 100%; padding: 12px; background: #4cd964; border: 0; color: #000; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .hints { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #888; }
+  </style>
+</head>
+<body>
+  <div class="top" id="topBar">Loja de roupas — 1 registro</div>
+  <div class="scene"></div>
+  <div class="binco">binco</div>
+  <div class="panel">
+    <h2>ROUPAS: ESCOLHA <span id="counter">1/12</span></h2>
+    <div class="cat" id="catName">Categoria: CASUAL M</div>
+    <ul class="list" id="list"></ul>
+    <button type="button" class="tab" id="tabBtn">TAB Categoria</button>
+  </div>
+  <div class="preview-box">
+    <div class="lbl">ROUPA SELECIONADA</div>
+    <div class="name" id="selName">CJ Padrao</div>
+    <div class="id" id="selId">ID da skin: 26</div>
+    <div class="char" id="char"></div>
+    <button type="button" class="confirm" id="confirm">X Confirmar</button>
+  </div>
+  <p class="hints">Setas do teclado: trocar roupa | TAB: categoria</p>
+  <script>
+    (function () {
+      var acc = null;
+      try { acc = sessionStorage.getItem("slrp_new_account"); } catch (e) {}
+      if (!acc) {
+        window.location.replace("saoluis-login.html");
+        return;
+      }
+      document.getElementById("topBar").textContent = "Escolha sua roupa, " + acc;
+    })();
+
+    var cats = [
+      { n: "CASUAL M", s: [26,29,60,72,73,88,97,98,142,170,186,220],
+        l: ["CJ Padrao","Motorista","Fazendeiro","Skin_072","Skin_073","Negociante","Mendigo","Skin_098","Skin_142","Skin_170","Skin_186","Skin_220"],
+        c: ["#5a8","#6a9","#7ba","#8cb","#9dc","#aed","#bfe","#caf","#daf","#ebf","#fcf","#ddd"] },
+      { n: "RUA / RP", s: [28,30,31,33,34,35,36,37,43,44,45,46],
+        l: ["Skin_028","Skin_030","Skin_031","Skin_033","Skin_034","Skin_035","Skin_036","Skin_037","Skin_043","Skin_044","Skin_045","Skin_046"],
+        c: ["#444","#555","#666","#777","#888","#999","#aaa","#bbb","#ccc","#ddd","#eee","#fff"] },
+      { n: "FEMININO", s: [55,56,57,58,59,60,61,62,63,64,69],
+        l: ["Mulher_01","Mulher_02","Mulher_03","Mulher_04","Mulher_05","Mulher_Casual","Mulher_07","Mulher_08","Mulher_09","Mulher_10","Mulher_11"],
+        c: ["#c9a","#dab","#ebc","#fcd","#fde","#eef","#dff","#cff","#bff","#aff","#9ff"] },
+      { n: "TRABALHO", s: [61,62,68,70,71,147,148,149],
+        l: ["Uniforme_01","Uniforme_02","Skin_068","Skin_070","Skin_071","Skin_147","Skin_148","Skin_149"],
+        c: ["#789","#89a","#9ab","#abc","#bcd","#cde","#def","#eff"] }
+    ];
+    var cat = 0, idx = 0;
+    function render() {
+      var c = cats[cat];
+      document.getElementById("catName").textContent = "Categoria: " + c.n;
+      document.getElementById("counter").textContent = (idx+1) + "/" + c.s.length;
+      document.getElementById("selName").textContent = c.l[idx];
+      document.getElementById("selId").textContent = "ID da skin: " + c.s[idx];
+      document.getElementById("char").style.background = "linear-gradient(180deg," + c.c[idx] + "," + c.c[idx] + "99)";
+      var list = document.getElementById("list"); list.innerHTML = "";
+      var start = Math.max(0, idx - 2), end = Math.min(c.s.length, start + 5);
+      if (end - start < 5) start = Math.max(0, end - 5);
+      for (var i = start; i < end; i++) {
+        var li = document.createElement("li");
+        li.textContent = (i === idx ? "> " : "") + c.l[i];
+        if (i === idx) li.className = "active";
+        li.onclick = (function(n){ return function(){ idx=n; render(); }; })(i);
+        list.appendChild(li);
+      }
+    }
+    document.getElementById("tabBtn").onclick = function(){ cat=(cat+1)%cats.length; idx=0; render(); };
+    document.getElementById("confirm").onclick = function () {
+      var acc = "";
+      try { acc = sessionStorage.getItem("slrp_new_account") || "Jogador"; } catch (e) { acc = "Jogador"; }
+      var roupa = cats[cat].l[idx];
+      var skin = cats[cat].s[idx];
+      try { sessionStorage.removeItem("slrp_new_account"); } catch (e) {}
+      document.body.innerHTML =
+        '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+        'font-family:Inter,Segoe UI,sans-serif;background:#0d0520;color:#fff;text-align:center;padding:24px">' +
+        '<div style="max-width:400px;border:1px solid #ff8c00;border-radius:12px;padding:32px">' +
+        '<p style="color:#ff8c00;font-size:11px;letter-spacing:.2em">SPAWN</p>' +
+        '<h1 style="margin:12px 0">Bem-vindo, ' + acc + '</h1>' +
+        '<p style="color:#aaa;margin-bottom:8px">Roupa: ' + roupa + ' (skin ' + skin + ')</p>' +
+        '<p style="color:#ccc">Voce apareceu no spawn do mapa.</p>' +
+        '<p style="margin-top:20px;font-size:12px;color:#666">Feche esta aba ou abra o login de novo para testar outro fluxo.</p>' +
+        '</div></div>';
+    };
+    document.onkeydown = function(e){
+      var c=cats[cat];
+      if(e.key==="ArrowUp"){ idx=(idx-1+c.s.length)%c.s.length; render(); }
+      if(e.key==="ArrowDown"){ idx=(idx+1)%c.s.length; render(); }
+      if(e.key==="Tab"){ e.preventDefault(); cat=(cat+1)%cats.length; idx=0; render(); }
+    };
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sao Luis RP - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: #f2f2f2;
+    }
+
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: #1a1008;
+    }
+
+    .bg-layer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: none;
+    }
+
+    .bg-layer.has-img img {
+      display: block;
+    }
+
+    .bg-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+    }
+
+    .picker {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      background: linear-gradient(180deg, #ff6b35 0%, #c44b20 40%, #2a1810 100%);
+      border: none;
+      width: 100%;
+      height: 100%;
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .picker.show { display: flex; }
+
+    .picker h2 {
+      font-size: 1.35rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px #000;
+    }
+
+    .picker p {
+      font-size: 0.95rem;
+      max-width: 400px;
+      line-height: 1.5;
+      opacity: 0.95;
+    }
+
+    .picker .ico { font-size: 3.5rem; margin-bottom: 16px; }
+
+    #fileInput { display: none; }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      pointer-events: none;
+    }
+
+    .overlay.hidden { display: none; }
+
+    .login-card {
+      pointer-events: auto;
+      width: 100%;
+      max-width: 380px;
+      background: rgba(12, 12, 18, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 28px 26px 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+    }
+
+    .login-card .badge {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: #ff8c00;
+      margin-bottom: 6px;
+    }
+
+    .login-card h2 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    .login-card .sub {
+      text-align: center;
+      font-size: 12px;
+      color: #bbb;
+      margin-bottom: 22px;
+    }
+
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: #ccc;
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 6px;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: #ff8c00;
+      box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.25);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .btn-reg {
+      background: rgba(255, 140, 0, 0.2);
+      border: 1px solid #ff8c00;
+      color: #ff8c00;
+    }
+
+    .btn-reg:hover { background: rgba(255, 140, 0, 0.35); }
+
+    .field .err {
+      font-size: 10px;
+      color: #ff6b6b;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .field .err.show { display: block; }
+
+    .actions button {
+      padding: 13px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-login {
+      background: linear-gradient(180deg, #ff9a2e, #e67a00);
+      border: none;
+      color: #1a1000;
+    }
+
+    .btn-login:hover { filter: brightness(1.08); }
+
+    .btn-exit {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #fff;
+    }
+
+    .btn-exit:hover { background: rgba(255, 255, 255, 0.14); }
+
+    .hint {
+      margin-top: 16px;
+      font-size: 10px;
+      color: #999;
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .trocar {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 3;
+      padding: 8px 14px;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .trocar.show { display: block; }
+
+    .trocar:hover { background: rgba(0, 0, 0, 0.85); }
+  </style>
+</head>
+<body>
+  <div class="bg-layer" id="bgLayer">
+    <img id="banner" alt="Banner Sao Luis RP">
+  </div>
+
+  <button type="button" class="picker" id="picker">
+    <span class="ico">&#128247;</span>
+    <h2>Clique para carregar o banner</h2>
+    <p>Imagem em tela cheia com login por cima.<br>Escolha o JPG/PNG do Sao Luis RP.</p>
+  </button>
+
+  <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
+
+  <button type="button" class="trocar" id="trocar">Trocar imagem</button>
+
+  <div class="overlay" id="overlay">
+    <div class="login-card">
+      <p class="badge">SA-MP</p>
+      <h2>Entrar no servidor</h2>
+      <p class="sub">San Andreas Multiplayer</p>
+
+      <div class="field">
+        <label for="user">NOME DE USUARIO (Nome_Sobrenome)</label>
+        <input id="user" type="text" placeholder="Ex: Joao_Silva" autocomplete="off">
+        <p class="err" id="userErr">Use Nome_Sobrenome (apenas letras, um _)</p>
+      </div>
+
+      <div class="field">
+        <label for="senha">SENHA</label>
+        <input id="senha" type="password" placeholder="Minimo 4 caracteres" autocomplete="off">
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-login" id="login">LOGIN</button>
+        <button type="button" class="btn-reg" id="registrar">REGISTRAR</button>
+        <button type="button" class="btn-exit" id="sair">SAIR</button>
+      </div>
+
+      <p class="hint">1&deg; vez: REGISTRAR &rarr; loja de roupas &rarr; spawn.<br>Ja tem conta: LOGIN &rarr; spawn direto.</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = "slrp_banner_v1";
+      var banner = document.getElementById("banner");
+      var bgLayer = document.getElementById("bgLayer");
+      var picker = document.getElementById("picker");
+      var overlay = document.getElementById("overlay");
+      var fileInput = document.getElementById("fileInput");
+      var trocar = document.getElementById("trocar");
+      var exts = [".jpg", ".jpeg", ".png", ".webp"];
+      var extTry = 0;
+
+      function showUI() {
+        overlay.classList.remove("hidden");
+      }
+
+      function showBanner(src) {
+        banner.src = src;
+        bgLayer.classList.add("has-img");
+        picker.classList.remove("show");
+        trocar.classList.add("show");
+        showUI();
+      }
+
+      function saveFile(file) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            localStorage.setItem(STORAGE_KEY, e.target.result);
+          } catch (err) {
+            showBanner(e.target.result);
+            return;
+          }
+          showBanner(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function tryFileOnDisk() {
+        if (extTry >= exts.length) return;
+        var test = new Image();
+        var src = "img/banner" + exts[extTry++];
+        test.onload = function () { showBanner(src); };
+        test.onerror = tryFileOnDisk;
+        test.src = src;
+      }
+
+      function validateName(raw) {
+        var blocked = ["admin","adm","moderador","mod","gm","staff","dono","owner","samp"];
+        if (!raw || raw.indexOf("_") === -1) return null;
+        var parts = raw.split("_");
+        if (parts.length !== 2) return null;
+        var a = parts[0], b = parts[1];
+        if (a.length < 2 || b.length < 2) return null;
+        if (!/^[A-Za-z]+$/.test(a) || !/^[A-Za-z]+$/.test(b)) return null;
+        var fmt = a.charAt(0).toUpperCase() + a.slice(1).toLowerCase() + "_" +
+          b.charAt(0).toUpperCase() + b.slice(1).toLowerCase();
+        var low = fmt.toLowerCase();
+        for (var i = 0; i < blocked.length; i++) {
+          if (low.indexOf(blocked[i]) !== -1) return null;
+        }
+        return fmt;
+      }
+
+      function getName() {
+        var err = document.getElementById("userErr");
+        var name = validateName(document.getElementById("user").value.trim());
+        if (!name) { err.classList.add("show"); return null; }
+        err.classList.remove("show");
+        document.getElementById("user").value = name;
+        return name;
+      }
+
+      showUI();
+
+      var saved = null;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+      if (saved) showBanner(saved);
+      else tryFileOnDisk();
+
+      picker.onclick = function () { fileInput.click(); };
+      trocar.onclick = function () { fileInput.click(); };
+      trocar.classList.add("show");
+      trocar.textContent = "Carregar banner";
+      fileInput.onchange = function () {
+        if (fileInput.files && fileInput.files[0]) saveFile(fileInput.files[0]);
+      };
+
+      function showSpawn(name) {
+        overlay.innerHTML =
+          '<div class="login-card" style="text-align:center">' +
+          '<p class="badge">SPAWN</p>' +
+          '<h2>Bem-vindo, ' + name + '</h2>' +
+          '<p class="sub" style="margin-bottom:16px">Voce apareceu no spawn do mapa (Los Santos).</p>' +
+          '<p class="hint">Simulacao do servidor. No jogo real entra direto apos o login.</p>' +
+          '</div>';
+      }
+
+      document.getElementById("login").onclick = function () {
+        var name = getName();
+        if (!name) return;
+        var s = document.getElementById("senha").value;
+        if (s.length < 4) {
+          alert("[Login] Digite a senha com pelo menos 4 caracteres.");
+          return;
+        }
+        try { sessionStorage.removeItem("slrp_new_account"); } catch (e) {}
+        showSpawn(name);
+      };
+
+      document.getElementById("registrar").onclick = function () {
+        var name = getName();
+        if (!name) return;
+        var s = document.getElementById("senha").value;
+        if (s.length < 4) {
+          alert("[Login] Crie uma senha com pelo menos 4 caracteres.");
+          return;
+        }
+        try { sessionStorage.setItem("slrp_new_account", name); } catch (e) {}
+        window.location.href = "loja-roupas.html";
+      };
+
+      document.getElementById("sair").onclick = function () {
+        alert("SAIR - no servidor voce sera desconectado.");
+      };
+    })();
+  </script>
+</body>
+</html>
