@@ -284,7 +284,7 @@
       </div>
 
       <p class="hint">1&deg; vez: REGISTRAR &rarr; loja de roupas &rarr; spawn.<br>Ja tem conta: LOGIN &rarr; spawn direto.</p>
-      <p class="banner-ok" id="bannerOk">Banner salvo para sempre neste navegador.</p>
+      <p class="banner-ok" id="bannerOk">Banner oficial Sao Luis RP (fixo).</p>
     </div>
   </div>
 
@@ -330,12 +330,22 @@
         reader.readAsDataURL(file);
       }
 
-      function tryFileOnDisk() {
-        if (extTry >= exts.length) return;
+      var permanentLoaded = false;
+
+      function tryFileOnDisk(done) {
+        if (extTry >= exts.length) {
+          if (done) done(false);
+          return;
+        }
         var test = new Image();
         var src = "img/banner" + exts[extTry++];
-        test.onload = function () { showBanner(src, false); };
-        test.onerror = tryFileOnDisk;
+        test.onload = function () {
+          permanentLoaded = true;
+          showBanner(src, true);
+          trocar.style.display = "none";
+          if (done) done(true);
+        };
+        test.onerror = function () { tryFileOnDisk(done); };
         test.src = src;
       }
 
@@ -367,18 +377,17 @@
 
       showUI();
 
-      SLRP_Banner.load(function (saved) {
-        if (saved) showBanner(saved, true);
-        else tryFileOnDisk();
+      tryFileOnDisk(function (found) {
+        if (found) return;
+        SLRP_Banner.load(function (saved) {
+          if (saved) showBanner(saved, true);
+          else picker.classList.add("show");
+        });
       });
 
       picker.onclick = function () { fileInput.click(); };
-      trocar.onclick = function () {
-        if (bannerOk.classList.contains("show") && !confirm("Trocar o banner? O novo substitui o antigo para sempre.")) return;
-        fileInput.click();
-      };
-      trocar.classList.add("show");
-      trocar.textContent = "Carregar banner";
+      trocar.onclick = function () { fileInput.click(); };
+      trocar.textContent = "Trocar banner";
       fileInput.onchange = function () {
         if (fileInput.files && fileInput.files[0]) saveFile(fileInput.files[0]);
       };

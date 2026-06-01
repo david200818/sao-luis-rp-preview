@@ -136,16 +136,31 @@
       tryNext();
     }
 
+    function setSceneBanner(scene, src) {
+      scene.style.backgroundImage =
+        "linear-gradient(90deg,rgba(0,0,0,.65),rgba(0,0,0,.3)), url('" + String(src).replace(/'/g, "%27") + "')";
+      scene.style.backgroundSize = "cover";
+      scene.style.backgroundPosition = "center";
+    }
+
     function applyBanner() {
       var scene = document.getElementById("scene");
-      var src = null;
-      try { src = localStorage.getItem("slrp_banner_v1"); } catch (e) {}
-      if (src) {
-        scene.style.backgroundImage =
-          "linear-gradient(90deg,rgba(0,0,0,.65),rgba(0,0,0,.3)), url('" + src.replace(/'/g, "%27") + "')";
-        scene.style.backgroundSize = "cover";
-        scene.style.backgroundPosition = "center";
+      var exts = [".png", ".jpg", ".jpeg", ".webp"];
+      var ei = 0;
+      function tryDisk() {
+        if (ei >= exts.length) {
+          var saved = null;
+          try { saved = localStorage.getItem("slrp_banner_v1"); } catch (e) {}
+          if (saved) setSceneBanner(scene, saved);
+          return;
+        }
+        var url = "img/banner" + exts[ei++];
+        var t = new Image();
+        t.onload = function () { setSceneBanner(scene, url); };
+        t.onerror = tryDisk;
+        t.src = url;
       }
+      tryDisk();
     }
 
     var acc = null;
